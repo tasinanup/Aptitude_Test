@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="img3.jpg" type="image/png">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><img src="SadhanaLogo.png" alt="Sadhana_Logo"/></div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="showSection('home'); return false;">Home</a></li>
+            <li><a href="#" onclick="showSection('about'); return false;">About Team</a></li>
+            <li><a href="#" onclick="showSection('take-test'); return false;">Take Test</a></li>
+            <li><a href="#" onclick="showSection('admin-login'); return false;">Admin Login</a></li>
+        </ul>
+    </nav>
+    <marquee behavior="scroll" direction="left">Welcome to Fusion Navigator's Website</marquee>
+    <div id="homediv">
+        
+    <section id="home">
+        <div class="typing-container" style="padding: 20px;">
+            <span class="typing-text" style="font-weight: bold; font-size: large;"></span>
+            <span class="cursor" style="font-weight: bold; font-size: large;">|</span>
+        </div>
+        <img src="img3.jpg" alt="TeamLogo" height="200" width="200">
+        <h1>Welcome to the Aptitude Test</h1>
+        <p>Test your skills and challenge yourself!</p>
+        <button onclick="showSection('take-test')">Take a Test</button>
+    </section>
+    </div>
+
+    <section id="about" class="hidden">
+        <h2>About Team Fusion Navigators</h2>
+        <p>We are a team passionate about innovative thinking and logical thinking.</p>
+        <img id="TeamImg" src="img4.jpg" alt="Team Fusion Navigators" width="500">
+    </section>
+
+    <section id="take-test" class="hidden">
+        <h2>Enter Your Details</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name">
+        <label for="email">Email:</label>
+        <input type="email" id="email">
+        <button onfocus="enterFullscreen()" onclick="startTest()">Start Test</button>
+    </section>
+
+    <section id="test-section" class="hidden">
+        <div>
+        <button onclick="enterFullscreen()">Full Screen Mode</button>
+        <h2>Aptitude Test</h2>
+        <div class="timer-container">
+            <div class="scroll-buttons">
+                <button class="scroll-btn" onclick="scrollToTop()">⬆ Scroll Up</button>
+                <button class="scroll-btn" onclick="scrollToBottom()">⬇ Scroll Down</button>
+            </div>
+            <span>Time Left: <span id="timer">40:00</span></span>
+        </div>
+        <div onfocus="displayQuestions()">
+            
+            <span id="test-questions"></span>
+            <button onclick="submitTest()">Submit Test</button>
+        </div>
+        <iframe id="test-questions" src="https://docs.google.com/forms/d/e/1FAIpQLSdTAokrKDVuVxCVvmsvTg2pVhc8fFDkNHwCMq5q_Jjp2HHwaQ/viewform?usp=header=true" width="1300" height="520" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+    </div>
+    <button onclick="submitTest()" style="margin-top: 10px;">Logout</button>
+    <p style="color: red; text-align: center; font-weight: bold;">Please Submit Google form before you Logout</p>
+    </section>
+
+    
+    <section id="thank-you" class="hidden">
+        <button onclick="exitFullscreen()">Exit Full Screen</button>
+        <h2>Thank You!</h2>
+        <p id="thank-you-message"></p>
+    </section>
+
+    <section id="admin-login" class="hidden">
+        <h2>Admin Login</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username">
+        <label for="password">Password:</label>
+        <input type="password" id="password">
+        <button onclick="adminLogin()">Login</button>
+    </section>
+
+    <section id="admin-panel" class="hidden">
+        <h2>Admin Panel</h2>
+        <p>Here you can add, delete questions and view results.</p>
+        <input type="text" id="question" placeholder="Enter question">
+        <input type="text" id="option1" placeholder="Option 1">
+        <input type="text" id="option2" placeholder="Option 2">
+        <input type="text" id="option3" placeholder="Option 3">
+        <input type="text" id="option4" placeholder="Option 4">
+        <input type="text" id="correct-answer" placeholder="Correct Answer">
+        <button onclick="addQuestion()">Add Question</button>
+        <ul id="question-list"></ul>
+
+        <h2>Test Questions</h2>
+        <ul id="admin-question-list"></ul>
+
+        <h2>Test Results</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody id="results-table"></tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Team Fusion Navigators</p>
+    </footer>
+
+    <script>
+        const words = ["Internalize", "Empower", "Evolve"];
+        let index = 0, letterIndex = 0, isDeleting = false;
+        const typingSpeed = 150, deletingSpeed = 100, pause = 1000;
+
+        function typeEffect() {
+            const textElement = document.querySelector('.typing-text');
+            let word = words[index];
+            
+            textElement.textContent = word.slice(0, letterIndex);
+            
+            if (!isDeleting && letterIndex < word.length) {
+                letterIndex++;
+                setTimeout(typeEffect, typingSpeed);
+            } else if (isDeleting && letterIndex > 0) {
+                letterIndex--;
+                setTimeout(typeEffect, deletingSpeed);
+            } else {
+                isDeleting = !isDeleting;
+                if (!isDeleting) index = (index + 1) % words.length;
+                setTimeout(typeEffect, pause);
+            }
+        }
+        
+        typeEffect();
+
+        let questions = [];
+        let participants = [];
+
+        
+
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => section.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+
+        function startTest() {
+            let name = document.getElementById('name').value;
+            let email = document.getElementById('email').value;
+            if (name && email) {
+                alert(`Welcome ${name}, your test will begin now.`);
+                displayQuestions();
+                showSection('test-section');
+            } else {
+                alert('Please enter your details before starting the test.');
+            }
+        }
+
+        function displayQuestions() {
+            let testList = document.getElementById('test-questions');
+            testList.innerHTML = '';
+            questions.forEach((q, index) => {
+                let item = document.createElement('div');
+                item.innerHTML = `<p>${q.question}</p>` +
+                    q.options.map((opt, i) => `<input type="radio" name="q${index}" value="${opt}"> ${opt}`).join('<br>');
+                testList.appendChild(item);
+            });
+        }
+
+        function submitTest() {
+            let score = 0;
+            for (let i = 0; i < questions.length; i++) {
+                let selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (!selected) {
+                    alert('Please answer all questions before submitting.');
+                    return;
+                }
+                if (selected.value === questions[i].answer) {
+                    score++;
+                }
+            }
+            let name = document.getElementById('name').value;
+            let email = document.getElementById('email').value;
+            participants.push({ name, email, score });
+            updateResultsTable();
+            document.getElementById('thank-you-message').innerText = `Thank you for attending the test, ${name}!`;
+            showSection('thank-you');
+        }
+
+        function addQuestion() {
+            let question = document.getElementById('question').value;
+            let options = [
+                document.getElementById('option1').value,
+                document.getElementById('option2').value,
+                document.getElementById('option3').value,
+                document.getElementById('option4').value
+            ];
+            let answer = document.getElementById('correct-answer').value;
+            questions.push({ question, options, answer });
+            updateAdminQuestions();
+        }
+
+        function updateAdminQuestions() {
+            let adminList = document.getElementById('admin-question-list');
+            adminList.innerHTML = '';
+            questions.forEach((q, index) => {
+                let item = document.createElement('li');
+                item.innerHTML = `<p>${q.question}</p> <button onclick="deleteQuestion(${index})">Delete</button>`;
+                adminList.appendChild(item);
+            });
+        }
+
+        function deleteQuestion(index) {
+            questions.splice(index, 1);
+            updateAdminQuestions();
+        }
+
+        function updateResultsTable() {
+            let resultsTable = document.getElementById('results-table');
+            resultsTable.innerHTML = '';
+            participants.forEach(p => {
+                let row = `<tr><td>${p.name}</td><td>${p.email}</td><td>${p.score}</td></tr>`;
+                resultsTable.innerHTML += row;
+            });
+        }
+        //////////////////////////////////////////
+        function adminLogin() {
+            let username = document.getElementById('username').value;
+            let password = document.getElementById('password').value;
+            if (username === "Eureka" && password === "973131") {
+                showSection('admin-panel');
+                updateAdminQuestionList();
+            } else {
+                alert('Invalid Credentials');
+            }
+        }
+
+        function addQuestion() {
+            let question = document.getElementById('question').value;
+            let option1 = document.getElementById('option1').value;
+            let option2 = document.getElementById('option2').value;
+            let option3 = document.getElementById('option3').value;
+            let option4 = document.getElementById('option4').value;
+            let correctAnswer = document.getElementById('correct-answer').value;
+            if (question && option1 && option2 && option3 && option4 && correctAnswer) {
+                let newQuestion = { question, options: [option1, option2, option3, option4], answer: correctAnswer };
+                questions.push(newQuestion);
+                updateAdminQuestionList();
+            } else {
+                alert('Please fill all fields to add a question.');
+            }
+        }
+
+        function updateAdminQuestionList() {
+            let adminList = document.getElementById('admin-question-list');
+            adminList.innerHTML = '';
+            questions.forEach(q => {
+                let item = document.createElement('li');
+                item.innerText = `${q.question} - Correct Answer: ${q.answer}`;
+                adminList.appendChild(item);
+            });
+        }
+
+//-------------------------Timmer in Website-----------------------
+let duration = 40 * 60; // 40 minutes in seconds
+        let timerElement = document.getElementById("timer");
+        let timerInterval;
+
+        function startTimer() {
+            timerInterval = setInterval(function () {
+                let minutes = Math.floor(duration / 60);
+                let seconds = duration % 60;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                timerElement.textContent = minutes + ":" + seconds;
+
+                if (duration <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time's up!");
+                }
+                duration--;
+            }, 1000);
+        }
+
+        window.onload = startTimer;
+
+
+
+//-----------------Security in Website-------------------------------------------
+        // Prevent changing browser tab title
+        let originalTitle = document.title;
+        setInterval(() => {
+            if (document.title !== originalTitle) {
+                document.title = originalTitle;
+            }
+        }, 100);
+
+        // Show alert if user switches tabs
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                alert("YOU ARE NOT ALLOWED TO CHANGE TABS");
+            }
+        });
+
+        function enterFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { // Firefox
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { // IE/Edge
+                elem.msRequestFullscreen();
+            }
+        }
+
+        function exitFullscreen(){
+            const elem = document.documentElement;
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { // Firefox
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { // IE/Edge
+                document.msExitFullscreen();
+            }
+        }
+
+        // Disable right-click
+        document.addEventListener("contextmenu", (event) => event.preventDefault());
+
+        // Disable certain key combinations
+        document.addEventListener("keydown", (event) => {
+            if (
+                event.ctrlKey && (event.key === "u" || event.key === "U" || event.key === "s" || event.key === "S" || event.key === "c" || event.key === "C" || event.key === "v" || event.key === "V") || // Ctrl + U or Ctrl + S or Ctrl + C or crtl + V
+                event.key === "F12" || // F12
+                event.key === "F11" || // F11
+                event.key === 'Escape' || // Escape
+                (event.ctrlKey && event.shiftKey && (event.key === "J" || event.key === "j")) || // Ctrl + Shift + J
+                (event.ctrlKey && event.shiftKey && (event.key === "C" || event.key === "c")) || // Ctrl + Shift + C    
+                (event.ctrlKey && event.shiftKey && (event.key === "I" || event.key === "i")) // Ctrl + Shift + I
+            ) {
+                event.preventDefault();
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function scrollToBottom() {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        }
+    </script>
+   
+</body>
+</html>
